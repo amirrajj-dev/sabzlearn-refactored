@@ -4,6 +4,8 @@
 
 Sabzlearn is a full-stack e-learning platform featuring course management, article publishing, user engagement features, and an admin and user pannel and dashboard. Built with modern web technologies.
 
+🚀 Live Demo: [sabzlearn](https://sabzlearn.onrender.com)
+
 ## 🚀 Features
 
 - **Course Management**
