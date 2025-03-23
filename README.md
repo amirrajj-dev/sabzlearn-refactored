@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Sabzlearn - Modern E-Learning Platform
 
-## Getting Started
+![Project Screenshot](/public/project-demo.png)
 
-First, run the development server:
+Sabzlearn is a full-stack e-learning platform featuring course management, article publishing, user engagement features, and an admin and user pannel and dashboard. Built with modern web technologies.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Course Management**
+  - Create/Edit/Update/Delete courses with sessions
+  - Category system for organization
+  - Discount codes and campaigns
+  - Comment/rating system with replies
+- **Content Publishing**
+  - Rich text articles with CKEditor
+  - Article categories and drafts
+  - Related content suggestions
+- **User System**
+  - JWT Authentication & Authorization
+  - Role-based access (Admin/User)
+  - User profiles and course enrollment
+- **Support System**
+  - Ticket management with priorities
+  - Real-time chat support
+- **Admin Dashboard**
+  - Comprehensive content management
+  - User moderation tools
+  - Analytics and reporting
+- **Modern Tech Stack**
+  - Next.js App Router
+  - Prisma ORM with PostgreSQL
+  - Zustand state management
+  - Tailwind CSS + DaisyUI
+- **Themes**
+  - +10 Different themes🔥🔥🔥
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Technologies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+![Tech Stack](https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,prisma,postgres,nodejs,docker,bun)
 
-## Learn More
+**Core Stack:**
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript
+- **Styling**: Tailwind CSS, DaisyUI
+- **State Management**: Zustand
+- **Backend**: Next.js API Routes + Server Actions
+- **Database**: PostgreSQL with Prisma ORM
+- **Real-time**: WebSockets
+- **Auth**: JWT, Bcrypt
+- **Cloud**: Cloudinary (Media Storage)
+- **Email**: Nodemailer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📦 Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/yourusername/sabzlearn-shop.git
+   cd sabzlearn-refactored
+   ```
+2. **install Dependencies**
+   ```bash
+   bun install
+   ```
+3. **Environment Setup**
+   ```bash
+   DATABASE_URL="postgresql://"
+   JWT_SECRET="your_jwt_secret"
+   CLOUDINARY_API_KEY="your_cloudinary_api_key"
+   CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
+   CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
+   EMAIL_USER="your_email"
+   EMAIL_PASSWORD="your_password"
+   ```
+4. **Database Setup**
+   ```bash
+   bun prisma db push
+   bun run prisma generate
+   bun run prisma migrate dev
+   ```
+5. **Run Development Server**
+   ```bash
+   bun run dev
+   ```
 
-## Deploy on Vercel
+## 🗄️ Database Schema
+1. User
+2. Course
+3. Category
+4. Comment
+5. Session
+6. Ticket
+7. Reply
+8. enum Role
+9. enum TicketStatus
+10. enum TicketPriority
+11. enum TicketType
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Configuration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Environment Variables
+
+| Variable           | Description                     |
+|--------------------|---------------------------------|
+| `DATABASE_URL`     | PostgreSQL connection string    |
+| `JWT_SECRET`       | JWT signing secret              |
+| `CLOUDINARY_URL`   | Cloudinary API credentials      |
+| `EMAIL_USER`       | Nodemailer email account        |
+| `EMAIL_PASSWORD`   | Nodemailer email password       |
+
+### Third-party Services
+1. **Cloudinary** - For media storage
+2. **PostgreSQL** - Primary database
+3. **Nodemailer** - Email service for password resets
+
+## 📚 API Documentation
+
+### Server Actions Structure
+
+/src/actions/
+├── article.actions.ts
+├── auth.actions.ts
+├── category.actions.ts
+├── comment.actions.ts
+├── course.actions.ts
+├── discount.actions.ts
+├── session.actions.ts
+├── ticket.actions.ts
+└── user.actions.ts
+
+## 🧠 State Management
+
+## Zustand stores for each entity:
+
+/src/stores/
+├── auth.store.ts
+├── article.store.ts
+├── cart.store.ts
+├── category.store.ts
+├── comment.store.ts
+├── course.store.ts
+├── discount.store.ts
+├── session.store.ts
+├── ticket.store.ts
+└── user.store.ts
+
+
+## Hope You like It My Firend😉🩷

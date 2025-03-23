@@ -249,7 +249,7 @@ export const forgotPassword = unstable_cache(
         },
       });
 
-      const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+      const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: user.email,
