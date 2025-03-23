@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  username         String
+  email            String    @unique
+  password         String
+  name             String
+  profile          String?
+  isBanned         Boolean   @default(false)
+  phone            String
+  role             Role      @default(USER)
+  courses          Course[]  @relation("UserToCourse")
+  comments         Comment[]
+  articles         Article[] @relation("UserArticles")
+  tickets          Ticket[]
+  replies          Reply[]
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Course {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  body        String
+  cover       String?
+  support     String?
+  shortName   String
+  price       Float
+  isComplete  Int
+  status      String
+  discount    Float
+  categoryID  String
+  creatorID   String?
+  category    Category  @relation(fields: [categoryID], references: [id])
+  creator     User?     @relation(fields: [creatorID], references: [id], name: "UserToCourse")
+  comments    Comment[]
+  sessions    Session[] @relation("courseToSession")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  title     String
+  name      String
+  articles  Article[] @relation("CategoryArticles")
+  courses   Course[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id            String  @id @default(uuid())
+  body          String
+  courseID      String
+  creatorID     String
+  answer        Int
+  score         Int
+  isAnswer      Int
+  mainCommentID String?
+
+  course  Course @relation(fields: [courseID], references: [id])
+  creator User   @relation(fields: [creatorID], references: [id])
+
+  replies       Comment[] @relation("CommentReplies")
+  parentComment Comment?  @relation("CommentReplies", fields: [mainCommentID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id       String  @id @default(uuid())
+  title    String
+  time     String
+  video    String?
+  free     Int
+  course   Course? @relation(fields: [courseId], references: [id], name: "courseToSession")
+  courseId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Menu {
+  id       String  @id @default(uuid())
+  title    String
+  href     String
+  parentID String?
+  parent   Menu?   @relation("MenuParentChild", fields: [parentID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Menu[]  @relation("MenuParentChild")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Article {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  body        String
+  cover       String?
+  shortName   String
+  categoryID  String
+  creatorID   String?
+  publish     Int
+
+  category Category @relation(fields: [categoryID], references: [id], name: "CategoryArticles")
+  creator  User?    @relation(fields: [creatorID], references: [id], name: "UserArticles")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Discount {
+  id        String   @id @default(uuid())
+  discount  Int
+  code      String
+  maxUse    Int
+  usage     Int      @default(0)
+  courseID  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ticket {
+  id         String         @id @default(uuid())
+  department String
+  type       TicketType
+  title      String
+  priority   TicketPriority
+  content    String
+  status     TicketStatus   @default(open)
+  userId     String
+  replies    Reply[]
+  user       User           @relation(fields: [userId], references: [id])
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model Reply {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  closed
+}
+
+enum TicketPriority {
+  low
+  medium
+  high
+}
+
+enum TicketType {
+  issue
+  request
+  suggestion
+  question
+}
