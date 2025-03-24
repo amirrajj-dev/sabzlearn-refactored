@@ -41,6 +41,7 @@ export interface ICourse {
   creator?: IUser | null;
   comments: IComment[];
   sessions: ISession[];
+  students : IUser[]
   purchases: IPurchase[];
   _count? : {
     comments : number

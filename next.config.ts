@@ -10,8 +10,17 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        hostname: '*', // Allow images from any hostname (wildcard)
+      protocol : "https",
+        hostname: 'secure.gravatar.com',
+        port: '',
+        pathname: '/**',
       },
+      {
+        protocol : "https",
+          hostname: 'sabzlearn.ir',
+          port: '',
+          pathname: '/**',
+        },
     ],
     deviceSizes: [320, 420, 768, 1024, 1200], // Default device sizes
     imageSizes: [16, 32, 48, 64, 96], // Default image sizes

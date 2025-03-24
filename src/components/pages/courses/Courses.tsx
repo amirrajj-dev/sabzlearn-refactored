@@ -104,7 +104,7 @@ const Courses = ({searchParams} : {searchParams: Promise<{ sort: string }>}) => 
             return [...filteredCourses].sort((a, b) => b.price - a.price);
           case "popular":
             return [...filteredCourses].sort(
-              (a, b) => (b.comments?.length || 0) - (a.comments?.length || 0)
+              (a, b) => (b.students.length) - (a.students.length)
             );
           default:
             return filteredCourses;

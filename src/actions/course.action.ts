@@ -23,6 +23,7 @@ export const getAllCourses = unstable_cache(
           price: true,
           cover: true,
           shortName: true,
+          students : {select : {id : true}},
           category: { select: { id: true, name: true, title: true } },
           creator: { select: { id: true, name: true } },
           _count: { select: { comments: true } },
@@ -513,7 +514,6 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       };
     }
 
-    // Check existing purchases
     const existingPurchases = await prisma.purchase.findMany({
       where: {
         userId: userID,
@@ -533,7 +533,6 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       };
     }
 
-    // Create purchase records
     const purchaseData = validCourses.map(course => ({
       userId: userID,
       courseId: course.id,
@@ -544,7 +543,6 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       data: purchaseData
     });
 
-    // Optionally, connect courses to enrolledCourses if that's still desired
     await prisma.user.update({
       where: { id: userID },
       data: {
@@ -554,9 +552,22 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       }
     });
 
+    await Promise.all(
+      validCourses.map(course =>
+        prisma.course.update({
+          where: { id: course.id },
+          data: {
+            students: {
+              connect: { id: userID }
+            }
+          }
+        })
+      )
+    );
+
     revalidatePath('/my-account/courses');
     revalidateTag('current-user');
-    revalidateTag('user-purchases'); // Add a new tag for purchases if needed
+    revalidateTag('all-courses')
 
     return {
       success: true,

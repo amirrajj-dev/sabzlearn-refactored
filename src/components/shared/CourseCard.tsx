@@ -9,7 +9,7 @@ import { ICourse } from "@/interfaces/interfaces";
 const CourseCard = ({ course }: { course: ICourse }) => {
   const img = course.cover && course.cover.slice(course.cover.lastIndexOf('/upload')).slice(8)
   const optimizedImageUrl = `https://res.cloudinary.com/dnrws0axe/image/upload/w_500,h_300,q_auto,f_auto/${img}`;
-
+console.log(course);
   return (
     <motion.div
       className="card w-full relative bg-base-200 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 border hover:scale-105 border-gray-700"
@@ -82,7 +82,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
         <div className="flex justify-between items-center mt-2">
           <div className="flex items-center gap-1 text-xs text-base-content">
             <FaUsers className="translate-y-.5" />
-            <span>158</span>
+            <span>{course.students?.length || 0}</span>
           </div>
           <div>
             <span className="text-xs text-base-content">
