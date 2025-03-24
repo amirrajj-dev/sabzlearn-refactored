@@ -489,11 +489,13 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       };
     }
 
-    const allCourses = await prisma.course.findMany({});
-    const courseNames = allCourses.map((course) => course.name);
+    const validCourses = await prisma.course.findMany({
+      where: {
+        name: { in: courses }
+      },
+      select: { id: true }
+    });
 
-    // Validate course names
-    const validCourses = courseNames.filter((course) => courses.includes(course));
     if (validCourses.length !== courses.length) {
       return {
         success: false,
@@ -501,47 +503,27 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       };
     }
 
-    // Find valid courses by name and extract their IDs
-    const userCourses = await Promise.all(
-      validCourses.map((course) =>
-        prisma.course.findFirst({
-          where: { name: course },
-          select: { id: true }, // Only fetch the ID
-        })
-      )
-    );
-
-    if (userCourses.some((course) => !course)) {
-      return {
-        success: false,
-        message: "One or more courses not found",
-      };
-    }
-
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: userID },
       data: {
         courses: {
-          connect: userCourses.map((course) => ({ id: course!.id }))
-        },
-      },
-      include : {
-        courses : true
+          connect: validCourses.map(course => ({ id: course.id }))
+        }
       }
     });
 
-    revalidatePath('/my-account/courses')
-    revalidateTag('current-user')
+    revalidatePath('/my-account/courses');
+    revalidateTag('current-user');
 
     return {
       success: true,
-      message: "Courses added successfully",
+      message: "Courses purchased successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Error buying course",
+      message: "Error purchasing courses",
     };
   }
 };

@@ -23,7 +23,7 @@ const CourseSessions = ({sessions} : {sessions : ISession[]}) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
   return (
-    <div className="mt-10 gap-6">
+    <div className="mt-10 gap-6" id="sessions">
       <div className="w-full space-y-4 p-6 bg-base-300 shadow-lg rounded-2xl">
         <div className="flex items-center gap-4 mb-6">
           <motion.div

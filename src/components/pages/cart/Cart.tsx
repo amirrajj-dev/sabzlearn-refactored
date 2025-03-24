@@ -105,7 +105,7 @@ const CartPage = () => {
                     </div>
                     <div className="flex items-center gap-4 mt-4 md:mt-0">
                       <div className="text-right">
-                        {item.discount || 0 > 0 && (
+                        {item!.discount && item.discount > 0 && (
                           <p className="text-sm text-success line-through">
                             {item.price.toLocaleString()} تومان
                           </p>

@@ -262,11 +262,11 @@ export const useCourseStore = create<CourseStore>((set) => ({
     try {
       const response = await buyCourse(courses, userID);
       if (response.success) {
+        set({loading : false})
         return {
           message: "Course purchased successfully",
           success: true,
         }
-        set({loading : false})
       }else{
         set({ error: response.message, loading: false });
         return {
