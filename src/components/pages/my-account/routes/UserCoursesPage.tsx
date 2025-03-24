@@ -17,7 +17,7 @@ const UserCoursesPage = async () => {
   const cardsData = [
     {
       title: 'دوره های ثبت نام شده',
-      desc: 'تومان',
+      desc: 'دوره',
       length: user?.enrolledCourses.length,
       bgColor: 'bg-blue-500',
       icon: <SlRocket />,

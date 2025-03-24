@@ -6,8 +6,13 @@ import Link from "next/link";
 import { RiTelegram2Line } from "react-icons/ri";
 import { IoMailOutline } from "react-icons/io5";
 import { MdOutlineLocalPhone } from "react-icons/md";
+import { cookies } from "next/headers";
+import { getMe } from "@/actions/auth.action";
 
-const Footer = () => {
+const Footer = async () => {
+  const cookiesStore = await cookies()
+  const token = cookiesStore.get('sabz-token')?.value
+  const user = (await getMe(token as string)).user
   return (
     <div className="bg-base-300 mt-20 p-6 sm:p-10">
 
@@ -39,15 +44,15 @@ const Footer = () => {
 
       <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-4 sm:gap-6 text-sm">
         <Link href="#" className="flex items-center gap-2">
-          <MdOutlineLocalPhone />
+          <MdOutlineLocalPhone className="-translate-y-px" />
           <span>02191030926</span>
         </Link>
         <Link href="#" className="flex items-center gap-2">
-          <RiTelegram2Line />
+          <RiTelegram2Line className="-translate-y-px" />
           <span>info@sabzlearn.ir</span>
         </Link>
         <Link href="#" className="flex items-center gap-2">
-          <IoMailOutline />
+          <IoMailOutline className="-translate-y-px" />
           <span>sabzlearn_support@</span>
         </Link>
       </div>
@@ -102,12 +107,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-base-content">
+                <Link href={user?.name ? '/my-account/tickets' : '/signin'} className="text-base-content">
                   ارسال تیکت
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-base-content">
+                <Link href="/courses" className="text-base-content">
                   همه دوره‌ها
                 </Link>
               </li>

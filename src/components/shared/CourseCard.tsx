@@ -32,7 +32,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
         <Link href={`/courses/${course.shortName}`} className="card-title text-xl font-semibold text-base-content line-clamp-2 h-13">
           {course.name}
         </Link>
-        <p className="text-xs text-base-content line-clamp-2 mt-2 overflow-hidden">
+        <p className="text-xs text-base-content line-clamp-2 max-h-8 mt-2 overflow-hidden">
           {course.description}
         </p>
 
