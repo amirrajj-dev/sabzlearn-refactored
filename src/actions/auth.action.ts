@@ -93,11 +93,13 @@ export const signup = async (formData: FormData): Promise<AuthResponse> => {
 
     const newUser: Omit<IUser, 'password'> = {
       ...user,
-      courses: [],
+      enrolledCourses: [],
       comments: [],
-      articles: [],
+      articles: [], 
       tickets: [],
       replies: [],
+      createdCourses :  [],
+      purchases: []
     };
     return { message: 'User created successfully', success: true, user: newUser };
   } catch (error: any) {
@@ -148,11 +150,13 @@ export const signin = async (formData: FormData): Promise<AuthResponse> => {
 
     const newUser: Omit<IUser, 'password'> = {
       ...user,
-      courses: [],
+      enrolledCourses: [],
+      createdCourses : [],
       comments: [],
       articles: [],
       tickets: [],
       replies: [],
+      purchases: []
     };
     return { message: 'User logged in successfully', success: true, user: newUser };
   } catch (error: any) {
@@ -190,7 +194,7 @@ export const getMe = unstable_cache(
         where: { id: decoded.userId },
         include: {
           comments: true,
-          courses: {
+          enrolledCourses: {
             include : {
               creator : {select : {name : true , }}
             }

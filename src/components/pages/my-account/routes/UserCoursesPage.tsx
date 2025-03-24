@@ -13,26 +13,26 @@ const UserCoursesPage = async () => {
   const cookiesStore = await cookies()
   const token = cookiesStore.get('sabz-token')?.value
   const user = (await getMe(token as string)).user
-  
+  console.log(user);
   const cardsData = [
     {
       title: 'دوره های ثبت نام شده',
       desc: 'تومان',
-      length: user?.courses.length,
+      length: user?.enrolledCourses.length,
       bgColor: 'bg-blue-500',
       icon: <SlRocket />,
     },
     {
       title: 'دوره های نقدی',
       desc: 'دوره',
-      length: user?.courses.filter(course=>course.price > 0).length,
+      length: user?.enrolledCourses.filter(course=>course.price > 0).length,
       bgColor: 'bg-purple-500',
       icon: <FaMoneyCheck />,
     },
     {
       title: 'دوره های رایگان',
       desc: 'تیکت',
-      length: user?.courses.filter(course=>course.price === 0).length,
+      length: user?.enrolledCourses.filter(course=>course.price === 0).length,
       bgColor: 'bg-green-500',
       icon: <AiFillDollarCircle />,
     },
@@ -54,8 +54,8 @@ const UserCoursesPage = async () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-        {user?.courses && user.courses.length > 0 ? (
-          user.courses.map((course) => (
+        {user?.enrolledCourses && user.enrolledCourses.length > 0 ? (
+          user.enrolledCourses.map((course) => (
             <UserCourseCard course={course} key={course.id} />
           ))
         ) : (

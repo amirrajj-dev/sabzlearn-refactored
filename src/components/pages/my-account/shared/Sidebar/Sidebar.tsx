@@ -37,7 +37,7 @@ const Sidebar = ({ isExpanded, isTablet, setIsTablet }: SidebarProps) => {
 
   const handleLogOut = async ()=>{
     if (confirm('آیا از خروج اطمینان دارید ؟')){
-      signout()
+      await signout()
       router.replace('/')
       toast.success("خروج با موفقیت به انجام رسید" , toastOptions)
     }

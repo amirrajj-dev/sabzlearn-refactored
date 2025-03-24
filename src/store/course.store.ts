@@ -10,11 +10,13 @@ import {
   getRelatedCourses,
   deleteSession,
   buyCourse,
+  getUserPurchases,
 } from "@/actions/course.action";
 import {
   CourseWithRelations,
   SessionWithRelations,
   ApiResponse,
+  PurchaseWithRelations,
 } from "@/interfaces/responses";
 import { PrismaClient } from "@prisma/client";
 
@@ -25,6 +27,7 @@ type CourseStore = {
   singleCourse: CourseWithRelations | null;
   sessions: SessionWithRelations[];
   relatedCourses: CourseWithRelations[];
+  purchases: PurchaseWithRelations[];
   loading: boolean;
   error: string | null;
 
@@ -55,7 +58,10 @@ type CourseStore = {
     sessionID: string
   ) => Promise<{ message: string; success: boolean }>;
   resetSingleCourse: () => void;
-  buyCourse: (courses: string[], userID: string) => Promise<ApiResponse>; // Add buyCourse method
+  buyCourse: (courses: string[], userID: string) => Promise<ApiResponse>;
+  getUserPurchases?: (
+    userID: string
+  ) => Promise<{ message: string; success: boolean }>;
 
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -73,10 +79,10 @@ export const useCourseStore = create<CourseStore>((set) => ({
   singleCourse: null,
   sessions: [],
   relatedCourses: [],
+  purchases: [],
   loading: false,
   error: null,
 
-  // Existing methods...
   getAllCourses: async () => {
     set({ loading: true, error: null });
     try {
@@ -256,36 +262,48 @@ export const useCourseStore = create<CourseStore>((set) => ({
     set({ singleCourse: null, loading: false, error: null });
   },
 
-  // Add buyCourse method
   buyCourse: async (courses, userID) => {
     set({ loading: true, error: null });
     try {
       const response = await buyCourse(courses, userID);
       if (response.success) {
-        set({loading : false})
+        set({ loading: false });
         return {
-          message: "Course purchased successfully",
           success: true,
-        }
-      }else{
+          message: "Course purchased successfully",
+        };
+      } else {
         set({ error: response.message, loading: false });
         return {
+          success: false,
           message: response.message,
-          success: false
-        }
+        };
       }
     } catch (error) {
       console.error(error);
-      set({loading: false });
+      set({ loading: false });
       return {
         success: false,
         message: "Error buying course",
       };
-    }finally{
-      set({loading : false})
     }
   },
-
+  getUserPurchases: async (userID) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await getUserPurchases(userID);
+      if (response.success) {
+        set({ purchases: response.data!, loading: false });
+        return { message: "Purchases fetched successfully", success: true };
+      } else {
+        set({ error: response.message, loading: false });
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      set({ error: "Failed to fetch purchases", loading: false });
+      return { message: error.message, success: false };
+    }
+  },
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
 }));

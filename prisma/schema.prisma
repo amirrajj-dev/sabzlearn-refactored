@@ -17,11 +17,13 @@ model User {
   isBanned         Boolean   @default(false)
   phone            String
   role             Role      @default(USER)
-  courses          Course[]  @relation("UserToCourse")
+  enrolledCourses  Course[]  @relation("UserEnrolledCourses")
+  createdCourses   Course[]  @relation("UserCreatedCourses")
   comments         Comment[]
   articles         Article[] @relation("UserArticles")
   tickets          Ticket[]
   replies          Reply[]
+  purchases        Purchase[] @relation("UserPurchases")
   resetToken       String?
   resetTokenExpiry DateTime?
   createdAt        DateTime  @default(now())
@@ -46,14 +48,15 @@ model Course {
   status      String
   discount    Float
   categoryID  String
-  creatorID   String?
   category    Category  @relation(fields: [categoryID], references: [id])
-  creator     User?     @relation(fields: [creatorID], references: [id], name: "UserToCourse")
+  students    User[]    @relation("UserEnrolledCourses")
+  creatorID   String?
+  creator     User?     @relation("UserCreatedCourses", fields: [creatorID], references: [id])
   comments    Comment[]
   sessions    Session[] @relation("courseToSession")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  purchases   Purchase[] @relation("CoursePurchases")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Category {
@@ -164,6 +167,17 @@ model Reply {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Purchase {
+  id          String   @id @default(uuid())
+  userId      String
+  courseId    String
+  purchaseDate DateTime
+  user        User     @relation(fields: [userId], references: [id], name: "UserPurchases")
+  course      Course   @relation(fields: [courseId], references: [id], name: "CoursePurchases")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum TicketStatus {

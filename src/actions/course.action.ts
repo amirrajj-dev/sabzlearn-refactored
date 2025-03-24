@@ -8,6 +8,7 @@ import {
   CourseWithRelations,
   SessionWithRelations,
   ApiResponse,
+  PurchaseWithRelations,
 } from "@/interfaces/responses";
 import { IUser } from "@/interfaces/interfaces";
 
@@ -155,7 +156,7 @@ export const deleteCourse = async (
     await deleteCloudinaryFile(course.cover);
 
     const usersWithCourse = await prisma.user.findMany({
-      where: { courses: { some: { id: courseID } } },
+      where: { enrolledCourses: { some: { id: courseID } } },
       select: { id: true },
     });
 
@@ -163,7 +164,7 @@ export const deleteCourse = async (
       usersWithCourse.map((user) =>
         prisma.user.update({
           where: { id: user.id },
-          data: { courses: { disconnect: { id: courseID } } },
+          data: { enrolledCourses: { disconnect: { id: courseID } } },
         })
       )
     );
@@ -471,21 +472,25 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
     if (courses.length === 0) {
       return {
         success: false,
-        message: "Please select at least one course",
+        message: "لطفا حداقل یک دوره را انتخاب کنید",
       };
     }
     if (!userID) {
       return {
         success: false,
-        message: "Please provide user ID",
+        message: "شناسه کاربر معتبر نیست",
       };
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userID } });
+    const user = await prisma.user.findUnique({ 
+      where: { id: userID },
+      select: { id: true }
+    });
+    
     if (!user) {
       return {
         success: false,
-        message: "User not found",
+        message: "کاربر یافت نشد",
       };
     }
 
@@ -493,20 +498,57 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
       where: {
         name: { in: courses }
       },
-      select: { id: true }
+      select: { 
+        id: true,
+        name: true
+      }
     });
 
     if (validCourses.length !== courses.length) {
+      const foundCourseNames = validCourses.map(c => c.name);
+      const missingCourses = courses.filter(name => !foundCourseNames.includes(name));
       return {
         success: false,
-        message: "One or more courses not found",
+        message: `دوره‌های زیر یافت نشدند: ${missingCourses.join(', ')}`,
       };
     }
 
+    // Check existing purchases
+    const existingPurchases = await prisma.purchase.findMany({
+      where: {
+        userId: userID,
+        courseId: { in: validCourses.map(c => c.id) }
+      },
+      select: { courseId: true }
+    });
+
+    const alreadyPurchasedIds = existingPurchases.map(p => p.courseId);
+    if (alreadyPurchasedIds.length > 0) {
+      const alreadyPurchasedCourses = validCourses
+        .filter(c => alreadyPurchasedIds.includes(c.id))
+        .map(c => c.name);
+      return {
+        success: false,
+        message: `شما قبلاً این دوره‌ها را خریداری کرده‌اید: ${alreadyPurchasedCourses.join(', ')}`,
+      };
+    }
+
+    // Create purchase records
+    const purchaseData = validCourses.map(course => ({
+      userId: userID,
+      courseId: course.id,
+      purchaseDate: new Date(),
+    }));
+
+    await prisma.purchase.createMany({
+      data: purchaseData
+    });
+
+    // Optionally, connect courses to enrolledCourses if that's still desired
     await prisma.user.update({
       where: { id: userID },
       data: {
-        courses: {
+        enrolledCourses: {
           connect: validCourses.map(course => ({ id: course.id }))
         }
       }
@@ -514,16 +556,42 @@ export const buyCourse = async (courses: string[], userID: string): Promise<ApiR
 
     revalidatePath('/my-account/courses');
     revalidateTag('current-user');
+    revalidateTag('user-purchases'); // Add a new tag for purchases if needed
 
     return {
       success: true,
-      message: "Courses purchased successfully",
+      message: "خرید دوره‌ها با موفقیت انجام شد",
     };
   } catch (error) {
-    console.error(error);
+    console.error("Error in buyCourse:", error);
     return {
       success: false,
-      message: "Error purchasing courses",
+      message: "خطا در انجام عملیات خرید",
     };
+  }
+};
+
+export const getUserPurchases = async (userID: string): Promise<ApiResponse<PurchaseWithRelations[]>> => {
+  try {
+    if (!userID) {
+      return { success: false, message: "Please provide user ID" };
+    }
+
+    const purchases = await prisma.purchase.findMany({
+      where: { userId: userID },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        course: { select: { id: true, name: true, shortName: true } }
+      }
+    });
+
+    return {
+      success: true,
+      message: "Purchases fetched successfully",
+      data: purchases as PurchaseWithRelations[]
+    };
+  } catch (error) {
+    console.error("Error fetching purchases:", error);
+    return { success: false, message: "Failed to fetch purchases" };
   }
 };

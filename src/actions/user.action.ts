@@ -208,7 +208,7 @@ export const getUserCourses = async (
 
     const userWithCourses = await prisma.user.findUnique({
       where: { id: userID },
-      include: { courses: { orderBy: { updatedAt: "desc" } } },
+      include: { enrolledCourses: { orderBy: { updatedAt: "desc" } } },
     });
 
     if (!userWithCourses) {
@@ -218,7 +218,7 @@ export const getUserCourses = async (
     return {
       success: true,
       message: "Courses retrieved successfully",
-      data: (userWithCourses.courses as any) || [],
+      data: (userWithCourses.enrolledCourses as any) || [],
     };
   } catch (error) {
     console.error("Error fetching user courses:", error);

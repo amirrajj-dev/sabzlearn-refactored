@@ -10,11 +10,13 @@ export interface IUser {
   isBanned: boolean;
   phone: string;
   role: Role;
-  courses: ICourse[];
+  createdCourses: ICourse[];
+  enrolledCourses: ICourse[];
   comments: IComment[];
   articles: IArticle[];
   tickets: ITicket[];
   replies: IReply[];
+  purchases: IPurchase[];
   resetToken?: string | null;
   resetTokenExpiry?: Date | null;
   createdAt: Date;
@@ -39,6 +41,7 @@ export interface ICourse {
   creator?: IUser | null;
   comments: IComment[];
   sessions: ISession[];
+  purchases: IPurchase[];
   _count? : {
     comments : number
   }
@@ -144,6 +147,17 @@ export interface IReply {
   ticketId: string;
   ticket?: ITicket;
   user: IReplyUser;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPurchase {
+  id: string;
+  userId: string;
+  courseId: string;
+  purchaseDate: Date;
+  user: IUser;
+  course: ICourse;
   createdAt: Date;
   updatedAt: Date;
 }

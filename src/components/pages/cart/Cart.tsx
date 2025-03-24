@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaTrash, FaShoppingCart , FaSpinner } from "react-icons/fa";
+import { FaTrash, FaShoppingCart, FaSpinner } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { toastOptions } from "@/helpers/toast";
 import Image from "next/image";
@@ -20,10 +20,10 @@ const CartPage = () => {
     applyDiscount,
     calculateTotals,
     loading,
-    resetCartItems
+    resetCartItems,
   } = useCartStore();
-  const {buyCourse , loading : loadingBuyCourse} = useCourseStore()
-  const {user} = useAuthStore()
+  const { buyCourse, loading: loadingBuyCourse } = useCourseStore();
+  const { user } = useAuthStore();
   const [discountCode, setDiscountCode] = useState("");
 
   useEffect(() => {
@@ -31,24 +31,32 @@ const CartPage = () => {
   }, [calculateTotals]);
 
   const handleApplyDiscount = async () => {
-    if (discountCode.trim()){
-        applyDiscount(discountCode);
+    if (discountCode.trim()) {
+      applyDiscount(discountCode);
     }
   };
 
   const handleBuyCourse = async () => {
     if (cartItems.length > 0) {
-      const response = await buyCourse(cartItems.map(item=>item.title) , user!.id)
+      const response = await buyCourse(
+        cartItems.map((item) => item.title),
+        user!.id
+      );
       if (response.success) {
-        toast.success(cartItems.length > 1 ? "دوره ها با موفقیت خریداری شدند :)" : "دوره با موفقیت خریداری شد :)", toastOptions);
+        toast.success(
+          cartItems.length > 1
+            ? "دوره ها با موفقیت خریداری شدند :)"
+            : "دوره با موفقیت خریداری شد :)",
+          toastOptions
+        );
         resetCartItems();
-      }else{
-        toast.error("خطا در خریداری دوره", toastOptions);
+      } else {
+        toast.error(response.message || "خطا در خریداری دوره", toastOptions);
       }
-    }else{
+    } else {
       toast.error("لطفا ابتدا محصول را به سبد خرید اضافه کنید", toastOptions);
     }
-  }
+  };
 
   return (
     <motion.div
@@ -100,7 +108,9 @@ const CartPage = () => {
                         <h3 className="font-semibold text-lg text-base-content">
                           {item.title}
                         </h3>
-                        <p className="text-sm mt-2 text-info">{item.category}</p>
+                        <p className="text-sm mt-2 text-info">
+                          {item.category}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 mt-4 md:mt-0">
@@ -113,7 +123,9 @@ const CartPage = () => {
                         <p className="font-semibold text-lg">
                           {(
                             item.price -
-                            (item.discount ? (item.price * item.discount) / 100 : 0)
+                            (item.discount
+                              ? (item.price * item.discount) / 100
+                              : 0)
                           ).toLocaleString()}{" "}
                           تومان
                         </p>
@@ -172,7 +184,11 @@ const CartPage = () => {
                   className="btn btn-primary"
                   disabled={discountApplied}
                 >
-                  {loading ? <FaSpinner className="animate-spin transition-all duration-200" /> : 'اعمال'}
+                  {loading ? (
+                    <FaSpinner className="animate-spin transition-all duration-200" />
+                  ) : (
+                    "اعمال"
+                  )}
                 </motion.button>
               </div>
             </motion.div>
@@ -224,7 +240,11 @@ const CartPage = () => {
               disabled={cartItems.length === 0}
               onClick={handleBuyCourse}
             >
-              {loadingBuyCourse ? <FaSpinner className="animate-spin transition-all duration-200" /> : "پرداخت"}
+              {loadingBuyCourse ? (
+                <FaSpinner className="animate-spin transition-all duration-200" />
+              ) : (
+                "پرداخت"
+              )}
             </motion.button>
           </div>
         </motion.div>
