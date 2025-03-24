@@ -17,7 +17,7 @@ const CourseHeader = ({ singleCourse }: { singleCourse: ICourse }) => {
     getMe();
   }, []);
 
-  const isEnrolled = user?.courses?.some(
+  const isEnrolled = user?.enrolledCourses?.some(
     (course) => course.id === singleCourse.id
   );
 
