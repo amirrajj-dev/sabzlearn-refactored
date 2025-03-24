@@ -7,12 +7,13 @@ import CourseCard from '@/components/shared/CourseCard';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getMe } from '@/actions/auth.action';
+import UserCourseCard from './ui/UseCourseCard';
 
 const UserCoursesPage = async () => {
   const cookiesStore = await cookies()
   const token = cookiesStore.get('sabz-token')?.value
   const user = (await getMe(token as string)).user
-  console.log(user);
+  
   const cardsData = [
     {
       title: 'دوره های ثبت نام شده',
@@ -55,7 +56,7 @@ const UserCoursesPage = async () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
         {user?.courses && user.courses.length > 0 ? (
           user.courses.map((course) => (
-            <CourseCard course={course} key={course.id} />
+            <UserCourseCard course={course} key={course.id} />
           ))
         ) : (
           <div className="col-span-full flex flex-col gap-4 items-center justify-center py-10">

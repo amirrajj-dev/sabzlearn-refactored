@@ -192,7 +192,7 @@ export const getMe = unstable_cache(
           comments: true,
           courses: {
             include : {
-              creator : {select : {name : true}}
+              creator : {select : {name : true , }}
             }
           },
           articles: true,

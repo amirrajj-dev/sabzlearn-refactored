@@ -92,7 +92,7 @@ const ResetPassword = ({ token }: { token: string }) => {
               type={showPassword ? "text" : "password"}
               {...register("password")}
               className="w-full input border-none pl-10 bg-white/10 text-base-content placeholder-base-content rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-              placeholder="رمز عبور"
+              placeholder="رمز عبور جدید"
             />
             <button
               type="button"
